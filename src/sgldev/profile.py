@@ -4,8 +4,8 @@ from typing import Annotated
 
 import typer
 
-from sgdev.common import run
-from sgdev.config import HOST, PORT
+from sgldev.common import run
+from sgldev.config import HOST, PORT
 
 app = typer.Typer(no_args_is_help=True)
 

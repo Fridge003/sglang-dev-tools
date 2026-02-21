@@ -9,9 +9,9 @@ from typing import Annotated
 
 import typer
 
-from sgdev.common import build_env_string, log_tag, run
-from sgdev.config import CUDA_VISIBLE_DEVICES, LOG_DIR, PORT
-from sgdev.config import SERVER_HOST as HOST
+from sgldev.common import build_env_string, log_tag, run
+from sgldev.config import CUDA_VISIBLE_DEVICES, LOG_DIR, PORT
+from sgldev.config import SERVER_HOST as HOST
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -56,7 +56,7 @@ def launch(
 
     Any unrecognised flags after `--` are forwarded verbatim, e.g.:
 
-        sgdev server launch --model-path foo -- --tool-call-parser deepseekv32
+        sgldev server launch --model-path foo -- --tool-call-parser deepseekv32
     """
     parts: list[str] = []
 

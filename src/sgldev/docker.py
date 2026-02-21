@@ -4,8 +4,8 @@ from typing import Annotated
 
 import typer
 
-from sgdev.common import env, run
-from sgdev.config import DEFAULT_CACHE, DEFAULT_IMAGE, DEFAULT_SHM
+from sgldev.common import env, run
+from sgldev.config import DEFAULT_CACHE, DEFAULT_IMAGE, DEFAULT_SHM
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -33,7 +33,7 @@ def create(
     Extra flags after `--` are forwarded to `docker run`.
 
     Example:
-        sgdev docker create --name mydev --cache-path /data/hf-cache
+        sgldev docker create --name mydev --cache-path /data/hf-cache
     """
     parts = ["docker run"]
     if detach:

@@ -18,7 +18,7 @@ dev = [
 ]
 
 [project.scripts]
-sgdev = "sgdev.cli:app"
+sgldev = "sgldev.cli:app"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/sgdev"]
+packages = ["src/sgldev"]

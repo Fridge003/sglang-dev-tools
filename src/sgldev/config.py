@@ -1,6 +1,6 @@
 """Centralized environment variable definitions."""
 
-from sgdev.common import env, env_int
+from sgldev.common import env, env_int
 
 # ---------------------------------------------------------------------------
 # Shared

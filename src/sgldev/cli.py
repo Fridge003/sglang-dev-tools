@@ -2,13 +2,13 @@
 
 import typer
 
-from sgdev.acc import app as acc_app
-from sgdev.docker import app as docker_app
-from sgdev.profile import app as profile_app
-from sgdev.server import app as server_app
+from sgldev.acc import app as acc_app
+from sgldev.docker import app as docker_app
+from sgldev.profile import app as profile_app
+from sgldev.server import app as server_app
 
 app = typer.Typer(
-    name="sgdev",
+    name="sgldev",
     help="CLI toolkit for SGLang development, evaluation, profiling, and deployment.",
     no_args_is_help=True,
 )

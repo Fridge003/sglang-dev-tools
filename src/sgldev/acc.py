@@ -5,8 +5,8 @@ from typing import Annotated
 
 import typer
 
-from sgdev.common import ensure_dir, get_random_id, log_tag, run, venv_cmd
-from sgdev.config import (
+from sgldev.common import ensure_dir, get_random_id, log_tag, run, venv_cmd
+from sgldev.config import (
     ACC_PORT as PORT,
     CUDA_VISIBLE_DEVICES,
     HOST,
