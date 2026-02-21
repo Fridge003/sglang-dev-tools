@@ -4,12 +4,10 @@ from typing import Annotated
 
 import typer
 
-from sgdev.common import env, env_int, run
+from sgdev.common import run
+from sgdev.config import HOST, PORT
 
 app = typer.Typer(no_args_is_help=True)
-
-HOST = env("HOST", "127.0.0.1")
-PORT = env_int("PORT", 30000)
 
 
 @app.command(

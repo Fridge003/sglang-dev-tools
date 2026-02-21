@@ -9,14 +9,11 @@ from typing import Annotated
 
 import typer
 
-from sgdev.common import build_env_string, env, env_int, log_tag, run
+from sgdev.common import build_env_string, log_tag, run
+from sgdev.config import CUDA_VISIBLE_DEVICES, LOG_DIR, PORT
+from sgdev.config import SERVER_HOST as HOST
 
 app = typer.Typer(no_args_is_help=True)
-
-HOST = env("HOST", "0.0.0.0")
-PORT = env_int("PORT", 30000)
-CUDA_VISIBLE_DEVICES = env("CUDA_VISIBLE_DEVICES", "0,1,2,3")
-LOG_DIR = env("LOG_DIR", "/data/logs")
 
 
 @app.command(

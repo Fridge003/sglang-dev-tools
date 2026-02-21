@@ -5,12 +5,10 @@ from typing import Annotated
 import typer
 
 from sgdev.common import env, run
+from sgdev.config import DEFAULT_CACHE, DEFAULT_IMAGE, DEFAULT_SHM
 
 app = typer.Typer(no_args_is_help=True)
 
-DEFAULT_IMAGE = env("SGDEV_DOCKER_IMAGE", "lmsysorg/sglang:dev")
-DEFAULT_SHM = env("SGDEV_DOCKER_SHM", "32g")
-DEFAULT_CACHE = env("SGDEV_DOCKER_CACHE", "")
 DEFAULT_SHELL = "/bin/zsh"
 
 

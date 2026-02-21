@@ -5,33 +5,20 @@ from typing import Annotated
 
 import typer
 
-from sgdev.common import (
-    ensure_dir,
-    env,
-    env_int,
-    get_random_id,
-    log_tag,
-    run,
-    venv_cmd,
+from sgdev.common import ensure_dir, get_random_id, log_tag, run, venv_cmd
+from sgdev.config import (
+    ACC_PORT as PORT,
+    CUDA_VISIBLE_DEVICES,
+    HOST,
+    LMEVAL_VENV,
+    LOG_DIR,
+    LONGBENCH_VENV,
+    MODEL_PATH,
+    MODEL_PATH_NATIVE,
+    NS_VENV,
 )
 
 app = typer.Typer(no_args_is_help=True)
-
-# ---------------------------------------------------------------------------
-# Config from environment (with defaults suitable for container use)
-# ---------------------------------------------------------------------------
-
-MODEL_PATH = env("MODEL_PATH", "/data/weights/hello2026")
-MODEL_PATH_NATIVE = env("MODEL_PATH_NATIVE", "/data/weights/hello2026_native")
-CODE_PATH = env("CODE_PATH", "/sgl-workspace/NightFall")
-CUDA_VISIBLE_DEVICES = env("CUDA_VISIBLE_DEVICES", "0,1,2,3")
-HOST = env("HOST", "127.0.0.1")
-PORT = env_int("PORT", 30010)
-LOG_DIR = env("LOG_DIR", "/data/logs")
-
-NS_VENV = env("NS_VENV", "/sgl-workspace/ns-venv")
-LMEVAL_VENV = env("LMEVAL_VENV", "/sgl-workspace/lmeval-venv")
-LONGBENCH_VENV = env("LONGBENCH_VENV", "/sgl-workspace/longbench-venv")
 
 
 @app.callback()
