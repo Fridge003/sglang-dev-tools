@@ -1,0 +1,77 @@
+# sglang-dev-tools (`sgdev`)
+
+CLI toolkit for SGLang development, evaluation, profiling, and deployment.
+
+## Install
+
+```bash
+pip install -e .
+```
+
+## Usage
+
+```bash
+sgdev --help              # Show all command groups
+sgdev acc --help          # Accuracy evaluation benchmarks
+sgdev server --help       # Server launch / health / kill
+sgdev profile --help      # Profiling (one-batch latency, serving throughput)
+sgdev docker --help       # Docker container management
+```
+
+### Examples
+
+```bash
+# Launch an SGLang server with DeepSeek FP4
+sgdev server launch \
+  --model-path nvidia/DeepSeek-V3-0324-FP4 \
+  --tp 4 --dp 4 --enable-dp-attention \
+  --kv-cache-dtype fp8_e4m3 \
+  --attention-backend trtllm_mla \
+  --quantization modelopt_fp4
+
+# Profile single-batch latency
+sgdev profile one-batch --batch-size 16 --input-len 1024 --output-len 20
+
+# Profile serving throughput
+sgdev profile serving --num-prompts 64 --random-input 32000 --random-output 1024
+
+# Run GSM8K accuracy eval
+sgdev acc run-gsm8k --temperature 0.0 --max-tokens 50000 --num-shots 5
+
+# Create a dev container
+sgdev docker create --name sglang_dev --cache-path /data/hf-cache
+```
+
+## Configuration
+
+All modules read sensible defaults from environment variables:
+
+| Variable | Default | Used by |
+|---|---|---|
+| `MODEL_PATH` | `/data/weights/hello2026` | acc |
+| `CODE_PATH` | `/sgl-workspace/NightFall` | acc |
+| `CUDA_VISIBLE_DEVICES` | `0,1,2,3` | acc, server |
+| `HOST` | `127.0.0.1` / `0.0.0.0` | acc, server, profile |
+| `PORT` | `30010` / `30000` | acc, server, profile |
+| `LOG_DIR` | `/data/logs` | acc, server |
+| `HF_TOKEN` | - | acc (setup-ns), docker |
+| `SGDEV_DOCKER_IMAGE` | `lmsysorg/sglang:dev` | docker |
+| `SGDEV_DOCKER_CACHE` | - | docker |
+
+## Adding a new command group
+
+1. Create `src/sgdev/mymodule.py`:
+   ```python
+   import typer
+   app = typer.Typer(no_args_is_help=True)
+
+   @app.command()
+   def my_command():
+       ...
+   ```
+2. Register it in `src/sgdev/cli.py`:
+   ```python
+   from sgdev.mymodule import app as mymodule_app
+   app.add_typer(mymodule_app, name="mymod", help="My new commands")
+   ```
+3. That's it. `sgdev mymod my-command` is now available.

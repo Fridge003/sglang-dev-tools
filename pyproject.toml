@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sglang-dev-tools"
+version = "0.1.0"
+description = "CLI toolkit for SGLang development, evaluation, profiling, and deployment"
+requires-python = ">=3.10"
+dependencies = [
+    "typer>=0.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "pytest",
+]
+
+[project.scripts]
+sgdev = "sgdev.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sgdev"]
