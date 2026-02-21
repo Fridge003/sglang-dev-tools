@@ -88,7 +88,7 @@ def stop(
 @app.command()
 def rm(
     name: Annotated[str, typer.Argument(help="Container name")],
-    force: Annotated[bool, typer.Option()] = False,
+    force: Annotated[bool, typer.Option()] = True,
 ):
     """Remove a container."""
     flag = " -f" if force else ""
