@@ -26,5 +26,5 @@ LONGBENCH_VENV = env("LONGBENCH_VENV", "/sgl-workspace/longbench-venv")
 # ---------------------------------------------------------------------------
 DEFAULT_IMAGE = env("DOCKER_IMAGE", "lmsysorg/sglang:dev")
 DEFAULT_SHM = env("DOCKER_SHM", "32g")
-DEFAULT_CACHE = env("DOCKER_CACHE", "")
+DEFAULT_CACHE = env("DOCKER_CACHE", "/data/cache/")
 DEFAULT_CONTAINER = env("DOCKER_CONTAINER", "sglang_baizhou")
