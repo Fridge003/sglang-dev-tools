@@ -53,14 +53,14 @@ def setup_sglang(
 
     Examples::
 
-        sgldev dev setup-sglang --github-token <token>
+        sgldev dev setup-sglang <github_token>
     """
     if not github_token:
         raise typer.BadParameter("GitHub token is required.")
-    
-    run(f"cd /sgl-workspace && rm -rf sglang && git clone https://{github_token}@github.com/sgl-project/sglang.git")
-    run(f"cd /sgl-workspace/sglang && pre-commit install && pre-commit run --all-files")
-    run(f"cd /sgl-workspace/sglang && pip install -e .")
+
+    run(f"cd /sgl-workspace && rm -rf sglang && git clone https://x-access-token:{github_token}@github.com/sgl-project/sglang.git")
+    run(f"cd /sgl-workspace/sglang && pre-commit install")
+    run(f"cd /sgl-workspace/sglang && pip install -e python")
     
 
 @app.command("pre-commit")
