@@ -40,7 +40,7 @@ def _ssh_base(user: str, host: str, key: str, port: int | None) -> list[str]:
 )
 def connect(
     ctx: typer.Context,
-    server: Annotated[str, typer.Option(help="Server name (defined via 'sgldev ssh server-set')")] = "",
+    server: Annotated[str, typer.Argument(help="Server name (defined via 'sgldev ssh server-set')")] = "",
     cmd: Annotated[str, typer.Option(help="Command to execute remotely (interactive shell if omitted)")] = "",
 ):
     """Open an interactive SSH session (or run a one-off remote command).

@@ -11,18 +11,18 @@ The file stores a list of dicts, each with a "server" key plus connection fields
 import json
 from pathlib import Path
 
-ALIASES_FILE = Path.home() / ".config" / "sgldev" / "servers.json"
+SERVERS_FILE = Path.home() / ".config" / "sgldev" / "servers.json"
 
 
 def _load() -> list[dict]:
-    if not ALIASES_FILE.exists():
+    if not SERVERS_FILE.exists():
         return []
-    return json.loads(ALIASES_FILE.read_text())
+    return json.loads(SERVERS_FILE.read_text())
 
 
 def _save(data: list[dict]) -> None:
-    ALIASES_FILE.parent.mkdir(parents=True, exist_ok=True)
-    ALIASES_FILE.write_text(json.dumps(data, indent=2) + "\n")
+    SERVERS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    SERVERS_FILE.write_text(json.dumps(data, indent=2) + "\n")
 
 
 def _find(data: list[dict], server: str) -> int:
