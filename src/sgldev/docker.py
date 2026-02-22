@@ -33,7 +33,7 @@ def create(
     Extra flags after `--` are forwarded to `docker run`.
 
     Example:
-        sgldev docker create --name mydev --cache-path /data/hf-cache
+        sgldev docker create --name mydev --cache-path /data/hf-cache --hf-token <huggingface_token>
     """
     parts = ["docker run"]
     if detach:

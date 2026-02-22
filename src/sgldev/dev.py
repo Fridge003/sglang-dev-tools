@@ -58,7 +58,7 @@ def setup_sglang(
     if not github_token:
         raise typer.BadParameter("GitHub token is required.")
 
-    run(f"cd /sgl-workspace && rm -rf sglang && git clone https://x-access-token:{github_token}@github.com/sgl-project/sglang.git")
+    run(f"cd /sgl-workspace && rm -rf sglang && git clone https://{github_token}@github.com/sgl-project/sglang.git")
     run(f"cd /sgl-workspace/sglang && pre-commit install")
     run(f"cd /sgl-workspace/sglang && pip install -e python")
     
