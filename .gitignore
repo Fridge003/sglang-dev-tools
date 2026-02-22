@@ -247,6 +247,9 @@ lmms-eval
 
 **/.claude/
 **/.serena/
+
+# Server aliases (sgldev ssh alias-*)
+servers.json
 ctags/
 outputs/
 
