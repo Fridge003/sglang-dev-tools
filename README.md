@@ -43,13 +43,7 @@ sgldev acc run-gsm8k --temperature 0.0 --max-tokens 50000 --num-shots 5
 sgldev docker create --name sglang_dev --cache-path /data/hf-cache
 
 # SSH into a remote machine
-sgldev ssh connect --host 10.0.0.1
-
-# Run a remote command over SSH
-sgldev ssh connect --host 10.0.0.1 --cmd "nvidia-smi"
-
-# Forward a port via SSH
-sgldev ssh connect --host 10.0.0.1 -- -L 8080:localhost:8080
+sgldev ssh connect --host 10.0.0.1 --key "YOUR_KEY" --cmd "nvidia-smi"
 
 # Push local directory to remote with rsync
 sgldev ssh rsync ./data /data --host 10.0.0.1
