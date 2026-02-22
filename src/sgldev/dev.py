@@ -45,6 +45,24 @@ def refetch():
     run("git fetch origin")
 
 
+@app.command("setup-sglang")
+def setup_sglang(
+    github_token: Annotated[str, typer.Argument(help="GitHub token")] = "",
+):
+    """Setup the sglang repository.
+
+    Examples::
+
+        sgldev dev setup-sglang --github-token <token>
+    """
+    if not github_token:
+        raise typer.BadParameter("GitHub token is required.")
+    
+    run(f"cd /sgl-workspace && rm -rf sglang && git clone https://{github_token}@github.com/sgl-project/sglang.git")
+    run(f"cd /sgl-workspace/sglang && pre-commit install && pre-commit run --all-files")
+    run(f"cd /sgl-workspace/sglang && pip install -e .")
+    
+
 @app.command("pre-commit")
 def pre_commit(
     run_all: Annotated[bool, typer.Option(help="Run pre-commit on all files after install")] = True,
