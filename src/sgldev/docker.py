@@ -70,24 +70,24 @@ def create(
 
 @app.command(name="exec")
 def exec_into(
-    name: Annotated[str, typer.Argument(help="Container name")] = DEFAULT_CONTAINER,
+    name: Annotated[str, typer.Option(help="Container name")] = DEFAULT_CONTAINER,
     shell: Annotated[str, typer.Option()] = DEFAULT_SHELL,
 ):
     """Exec into a running container."""
     run(f"docker exec -it {name} {shell}")
+    run("pip install --force-reinstall git+https://github.com/Fridge003/sglang-dev-tools")
 
-
-@app.command()
-def stop(
-    name: Annotated[str, typer.Argument(help="Container name")],
+@app.command(name="pull")
+def exec_pull(
+    name: Annotated[str, typer.Option(help="Container name")] = DEFAULT_IMAGE,
 ):
-    """Stop a running container."""
-    run(f"docker stop {name}")
+    """Pull the latest image from the registry."""
+    run(f"docker pull {name}")
 
 
 @app.command()
 def rm(
-    name: Annotated[str, typer.Argument(help="Container name")],
+    name: Annotated[str, typer.Option(help="Container name")] = DEFAULT_CONTAINER,
     force: Annotated[bool, typer.Option()] = True,
 ):
     """Remove a container."""
