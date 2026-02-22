@@ -5,7 +5,7 @@ from typing import Annotated
 import typer
 
 from sgldev.common import env, run
-from sgldev.config import DEFAULT_CACHE, DEFAULT_IMAGE, DEFAULT_SHM
+from sgldev.config import DEFAULT_CACHE, DEFAULT_CONTAINER, DEFAULT_IMAGE, DEFAULT_SHM
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -17,7 +17,7 @@ DEFAULT_SHELL = "/bin/zsh"
 )
 def create(
     ctx: typer.Context,
-    name: Annotated[str, typer.Option(help="Container name")],
+    name: Annotated[str, typer.Option(help="Container name")] = DEFAULT_CONTAINER,
     image: Annotated[str, typer.Option(help="Docker image")] = DEFAULT_IMAGE,
     cache_path: Annotated[str, typer.Option(help="Host path to mount as /root/.cache")] = DEFAULT_CACHE,
     hf_token: Annotated[str, typer.Option(help="HuggingFace token (or set HF_TOKEN env)")] = "",
@@ -70,7 +70,7 @@ def create(
 
 @app.command(name="exec")
 def exec_into(
-    name: Annotated[str, typer.Argument(help="Container name")],
+    name: Annotated[str, typer.Argument(help="Container name")] = DEFAULT_CONTAINER,
     shell: Annotated[str, typer.Option()] = DEFAULT_SHELL,
 ):
     """Exec into a running container."""

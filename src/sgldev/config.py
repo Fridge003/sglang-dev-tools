@@ -27,6 +27,7 @@ LONGBENCH_VENV = env("LONGBENCH_VENV", "/sgl-workspace/longbench-venv")
 DEFAULT_IMAGE = env("SGDEV_DOCKER_IMAGE", "lmsysorg/sglang:dev")
 DEFAULT_SHM = env("SGDEV_DOCKER_SHM", "32g")
 DEFAULT_CACHE = env("SGDEV_DOCKER_CACHE", "")
+DEFAULT_CONTAINER = env("SGDEV_DOCKER_CONTAINER", "sglang_baizhou")
 
 # ---------------------------------------------------------------------------
 # Server (server.py) — listens on 0.0.0.0 by default
