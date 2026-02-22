@@ -30,6 +30,21 @@ def git_config(
         run(f'git config --local user.email "{email}"')
 
 
+@app.command("refetch")
+def refetch():
+    """Re-add the sglang origin remote and fetch.
+
+    Useful when the origin remote is stale or misconfigured.
+
+    Examples::
+
+        sgldev dev refetch
+    """
+    run("git remote rm origin")
+    run("git remote add origin https://github.com/sgl-project/sglang.git")
+    run("git fetch origin")
+
+
 @app.command("pre-commit")
 def pre_commit(
     run_all: Annotated[bool, typer.Option(help="Run pre-commit on all files after install")] = True,
