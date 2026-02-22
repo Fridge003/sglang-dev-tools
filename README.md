@@ -58,26 +58,6 @@ sgldev ssh rsync ./data /data --host 10.0.0.1
 sgldev ssh rsync /data/results ./results --host 10.0.0.1 --no-to-remote
 ```
 
-## Configuration
-
-All modules read sensible defaults from environment variables:
-
-| Variable | Default | Used by |
-|---|---|---|
-| `MODEL_PATH` | `/data/weights/hello2026` | acc |
-| `CODE_PATH` | `/sgl-workspace/NightFall` | acc |
-| `CUDA_VISIBLE_DEVICES` | `0,1,2,3` | acc, server |
-| `HOST` | `127.0.0.1` / `0.0.0.0` | acc, server, profile |
-| `PORT` | `30010` / `30000` | acc, server, profile |
-| `LOG_DIR` | `/data/logs` | acc, server |
-| `HF_TOKEN` | - | acc (setup-ns), docker |
-| `SGDEV_DOCKER_IMAGE` | `lmsysorg/sglang:dev` | docker |
-| `SGDEV_DOCKER_CACHE` | - | docker |
-| `SSH_USER` | `radixark` | ssh |
-| `SSH_HOST` | - | ssh |
-| `SSH_KEY` | `~/.ssh/sglang_dev` | ssh |
-| `SSH_PORT` | `22` | ssh |
-
 ## Adding a new command group
 
 1. Create `src/sgldev/mymodule.py`:
