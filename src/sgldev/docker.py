@@ -75,7 +75,6 @@ def exec_into(
 ):
     """Exec into a running container."""
     run(f"docker exec -it {name} {shell}")
-    run("pip install --force-reinstall git+https://github.com/Fridge003/sglang-dev-tools")
 
 @app.command(name="pull")
 def exec_pull(

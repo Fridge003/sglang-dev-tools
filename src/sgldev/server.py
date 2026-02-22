@@ -9,9 +9,9 @@ from typing import Annotated
 
 import typer
 
-from sgldev.common import build_env_string, log_tag, run
+from sgldev.common import log_tag, run
 from sgldev.config import CUDA_VISIBLE_DEVICES, LOG_DIR, PORT
-from sgldev.config import SERVER_HOST as HOST
+from sgldev.config import HOST
 
 app = typer.Typer(no_args_is_help=True)
 

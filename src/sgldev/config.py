@@ -28,8 +28,3 @@ DEFAULT_IMAGE = env("DOCKER_IMAGE", "lmsysorg/sglang:dev")
 DEFAULT_SHM = env("DOCKER_SHM", "32g")
 DEFAULT_CACHE = env("DOCKER_CACHE", "")
 DEFAULT_CONTAINER = env("DOCKER_CONTAINER", "sglang_baizhou")
-
-# ---------------------------------------------------------------------------
-# Server (server.py) — listens on 0.0.0.0 by default
-# ---------------------------------------------------------------------------
-SERVER_HOST = env("HOST", "0.0.0.0")
