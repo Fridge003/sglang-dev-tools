@@ -44,6 +44,8 @@ def connect(
     cmd: Annotated[str, typer.Option(help="Command to execute remotely (interactive shell if omitted)")] = "",
 ):
     """Open an interactive SSH session (or run a one-off remote command).
+    sgldev ssh connect mybox
+    sgldev ssh connect mybox --cmd "nvidia-smi"
 
     Extra flags after ``--`` are forwarded to ``ssh``, e.g.:
 
@@ -52,12 +54,21 @@ def connect(
     user, host, key, port = _resolve_server(server)
     parts = _ssh_base(user, host, key, port)
 
-    if ctx.args:
-        parts.extend(ctx.args)
+    extra_args = list(ctx.args) if ctx.args else []
+
+    # --cmd may land in extra_args when placed after the positional server arg
+    # (allow_interspersed_args=False stops option parsing after the positional)
+    if "--cmd" in extra_args:
+        idx = extra_args.index("--cmd")
+        if idx + 1 < len(extra_args):
+            cmd = extra_args[idx + 1]
+            extra_args = extra_args[:idx] + extra_args[idx + 2:]
+
+    if extra_args:
+        parts.extend(extra_args)
 
     if cmd:
         parts.append(f'"{cmd}"')
-
     run(" ".join(parts))
 
 
