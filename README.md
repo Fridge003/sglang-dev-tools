@@ -6,6 +6,7 @@ CLI toolkit for SGLang development, evaluation, profiling, and deployment.
 
 ```bash
 pip install -e .
+pip install --force-reinstall git+https://github.com/Fridge003/sglang-dev-tools
 ```
 
 ## Usage
@@ -17,39 +18,6 @@ sgldev server --help       # Server launch / health / kill
 sgldev profile --help      # Profiling (one-batch latency, serving throughput)
 sgldev docker --help       # Docker container management
 sgldev ssh --help          # SSH connection and rsync operations
-```
-
-### Examples
-
-```bash
-# Launch an SGLang server with DeepSeek FP4
-sgldev server launch \
-  --model-path nvidia/DeepSeek-V3-0324-FP4 \
-  --tp 4 --dp 4 --enable-dp-attention \
-  --kv-cache-dtype fp8_e4m3 \
-  --attention-backend trtllm_mla \
-  --quantization modelopt_fp4
-
-# Profile single-batch latency
-sgldev profile one-batch --batch-size 16 --input-len 1024 --output-len 20
-
-# Profile serving throughput
-sgldev profile serving --num-prompts 64 --random-input 32000 --random-output 1024
-
-# Run GSM8K accuracy eval
-sgldev acc run-gsm8k --temperature 0.0 --max-tokens 50000 --num-shots 5
-
-# Create a dev container
-sgldev docker create --name sglang_dev --cache-path /data/hf-cache
-
-# SSH into a remote machine
-sgldev ssh connect --host 10.0.0.1 --key "YOUR_KEY" --cmd "nvidia-smi"
-
-# Push local directory to remote with rsync
-sgldev ssh rsync ./data /data --host 10.0.0.1
-
-# Pull from remote with rsync
-sgldev ssh rsync /data/results ./results --host 10.0.0.1 --no-to-remote
 ```
 
 ## Adding a new command group
