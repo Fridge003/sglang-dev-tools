@@ -24,8 +24,8 @@ LONGBENCH_VENV = env("LONGBENCH_VENV", "/sgl-workspace/longbench-venv")
 # ---------------------------------------------------------------------------
 # Dev (dev.py)
 # ---------------------------------------------------------------------------
-GIT_NAME = env("GIT_NAME", "")
-GIT_EMAIL = env("GIT_EMAIL", "")
+GIT_NAME = env("GIT_NAME", "Baizhou Zhang")
+GIT_EMAIL = env("GIT_EMAIL", "sobereddiezhang@gmail.com")
 
 # ---------------------------------------------------------------------------
 # Docker (docker.py)
