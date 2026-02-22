@@ -22,6 +22,12 @@ LMEVAL_VENV = env("LMEVAL_VENV", "/sgl-workspace/lmeval-venv")
 LONGBENCH_VENV = env("LONGBENCH_VENV", "/sgl-workspace/longbench-venv")
 
 # ---------------------------------------------------------------------------
+# Dev (dev.py)
+# ---------------------------------------------------------------------------
+GIT_NAME = env("GIT_NAME", "")
+GIT_EMAIL = env("GIT_EMAIL", "")
+
+# ---------------------------------------------------------------------------
 # Docker (docker.py)
 # ---------------------------------------------------------------------------
 DEFAULT_IMAGE = env("DOCKER_IMAGE", "lmsysorg/sglang:dev")
