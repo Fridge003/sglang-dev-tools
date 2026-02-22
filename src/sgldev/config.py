@@ -30,14 +30,6 @@ DEFAULT_CACHE = env("DOCKER_CACHE", "")
 DEFAULT_CONTAINER = env("DOCKER_CONTAINER", "sglang_baizhou")
 
 # ---------------------------------------------------------------------------
-# SSH / rsync (ssh.py)
-# ---------------------------------------------------------------------------
-SSH_USER = env("SSH_USER", "radixark")
-SSH_HOST = env("SSH_HOST", "")
-SSH_KEY = env("SSH_KEY", "~/.ssh/sglang_dev")
-SSH_PORT = env_int("SSH_PORT", 22)
-
-# ---------------------------------------------------------------------------
 # Server (server.py) — listens on 0.0.0.0 by default
 # ---------------------------------------------------------------------------
 SERVER_HOST = env("HOST", "0.0.0.0")
