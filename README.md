@@ -16,6 +16,7 @@ sgldev acc --help          # Accuracy evaluation benchmarks
 sgldev server --help       # Server launch / health / kill
 sgldev profile --help      # Profiling (one-batch latency, serving throughput)
 sgldev docker --help       # Docker container management
+sgldev ssh --help          # SSH connection and rsync operations
 ```
 
 ### Examples
@@ -40,6 +41,21 @@ sgldev acc run-gsm8k --temperature 0.0 --max-tokens 50000 --num-shots 5
 
 # Create a dev container
 sgldev docker create --name sglang_dev --cache-path /data/hf-cache
+
+# SSH into a remote machine
+sgldev ssh connect --host 10.0.0.1
+
+# Run a remote command over SSH
+sgldev ssh connect --host 10.0.0.1 --cmd "nvidia-smi"
+
+# Forward a port via SSH
+sgldev ssh connect --host 10.0.0.1 -- -L 8080:localhost:8080
+
+# Push local directory to remote with rsync
+sgldev ssh rsync ./data /data --host 10.0.0.1
+
+# Pull from remote with rsync
+sgldev ssh rsync /data/results ./results --host 10.0.0.1 --no-to-remote
 ```
 
 ## Configuration
@@ -57,6 +73,10 @@ All modules read sensible defaults from environment variables:
 | `HF_TOKEN` | - | acc (setup-ns), docker |
 | `SGDEV_DOCKER_IMAGE` | `lmsysorg/sglang:dev` | docker |
 | `SGDEV_DOCKER_CACHE` | - | docker |
+| `SSH_USER` | `radixark` | ssh |
+| `SSH_HOST` | - | ssh |
+| `SSH_KEY` | `~/.ssh/sglang_dev` | ssh |
+| `SSH_PORT` | `22` | ssh |
 
 ## Adding a new command group
 
