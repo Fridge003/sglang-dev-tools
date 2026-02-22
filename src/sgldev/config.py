@@ -24,18 +24,18 @@ LONGBENCH_VENV = env("LONGBENCH_VENV", "/sgl-workspace/longbench-venv")
 # ---------------------------------------------------------------------------
 # Docker (docker.py)
 # ---------------------------------------------------------------------------
-DEFAULT_IMAGE = env("SGDEV_DOCKER_IMAGE", "lmsysorg/sglang:dev")
-DEFAULT_SHM = env("SGDEV_DOCKER_SHM", "32g")
-DEFAULT_CACHE = env("SGDEV_DOCKER_CACHE", "")
-DEFAULT_CONTAINER = env("SGDEV_DOCKER_CONTAINER", "sglang_baizhou")
+DEFAULT_IMAGE = env("DOCKER_IMAGE", "lmsysorg/sglang:dev")
+DEFAULT_SHM = env("DOCKER_SHM", "32g")
+DEFAULT_CACHE = env("DOCKER_CACHE", "")
+DEFAULT_CONTAINER = env("DOCKER_CONTAINER", "sglang_baizhou")
 
 # ---------------------------------------------------------------------------
 # SSH / rsync (ssh.py)
 # ---------------------------------------------------------------------------
-SSH_USER = env("SGDEV_SSH_USER", "root")
-SSH_HOST = env("SGDEV_SSH_HOST", "")
-SSH_KEY = env("SGDEV_SSH_KEY", "")
-SSH_PORT = env_int("SGDEV_SSH_PORT", 22)
+SSH_USER = env("SSH_USER", "root")
+SSH_HOST = env("SSH_HOST", "")
+SSH_KEY = env("SSH_KEY", "")
+SSH_PORT = env_int("SSH_PORT", 22)
 
 # ---------------------------------------------------------------------------
 # Server (server.py) — listens on 0.0.0.0 by default
