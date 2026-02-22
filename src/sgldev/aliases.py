@@ -1,10 +1,10 @@
-"""Server alias management backed by a local JSON file (~/.config/sgldev/servers.json).
+"""Server management backed by a local JSON file (~/.config/sgldev/servers.json).
 
-The file stores a list of dicts, each with an "alias" key plus connection fields:
+The file stores a list of dicts, each with a "server" key plus connection fields:
 
     [
-      {"alias": "devbox", "host": "10.0.0.1", "port": 22, "key": "~/.ssh/id_rsa"},
-      {"alias": "prod",   "host": "10.0.0.2", "port": 2222}
+      {"server": "devbox", "host": "10.0.0.1", "port": 22, "key": "~/.ssh/id_rsa"},
+      {"server": "prod",   "host": "10.0.0.2", "port": 2222}
     ]
 """
 
@@ -25,23 +25,23 @@ def _save(data: list[dict]) -> None:
     ALIASES_FILE.write_text(json.dumps(data, indent=2) + "\n")
 
 
-def _find(data: list[dict], alias: str) -> int:
-    """Return the index of the entry with the given alias, or -1."""
+def _find(data: list[dict], server: str) -> int:
+    """Return the index of the entry with the given server name, or -1."""
     for i, entry in enumerate(data):
-        if entry.get("alias") == alias:
+        if entry.get("server") == server:
             return i
     return -1
 
 
-def resolve(alias: str) -> dict[str, str | int]:
-    """Return the server entry for *alias*, or exit with an error."""
+def resolve(server: str) -> dict[str, str | int]:
+    """Return the server entry for *server*, or exit with an error."""
     data = _load()
-    idx = _find(data, alias)
+    idx = _find(data, server)
     if idx == -1:
-        available = ", ".join(e["alias"] for e in data) or "(none)"
+        available = ", ".join(e["server"] for e in data) or "(none)"
         raise SystemExit(
-            f"Unknown alias '{alias}'. Available: {available}\n"
-            f"Run 'sgldev ssh alias-set <name> --host <ip>' to create one."
+            f"Unknown server '{server}'. Available: {available}\n"
+            f"Run 'sgldev ssh server-set <name> --host <ip>' to create one."
         )
     return data[idx]
 
@@ -54,7 +54,7 @@ def add(
     key: str | None = None,
 ) -> None:
     data = _load()
-    entry: dict[str, str | int] = {"alias": name, "host": host}
+    entry: dict[str, str | int] = {"server": name, "host": host}
     if user is not None:
         entry["user"] = user
     if port is not None:
@@ -74,8 +74,8 @@ def remove(name: str) -> None:
     data = _load()
     idx = _find(data, name)
     if idx == -1:
-        available = ", ".join(e["alias"] for e in data) or "(none)"
-        raise SystemExit(f"Alias '{name}' not found. Available: {available}")
+        available = ", ".join(e["server"] for e in data) or "(none)"
+        raise SystemExit(f"Server '{name}' not found. Available: {available}")
     data.pop(idx)
     _save(data)
 
