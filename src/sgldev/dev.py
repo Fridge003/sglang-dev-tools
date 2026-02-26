@@ -1,5 +1,6 @@
 """Development setup helpers: git config, pre-commit, etc."""
 
+import os
 from typing import Annotated
 
 import typer
@@ -33,3 +34,24 @@ def setup_sglang(
         run(f'cd /sgl-workspace/sglang && git config --local user.name "{name}"')
     if email:
         run(f'cd /sgl-workspace/sglang && git config --local user.email "{email}"')
+
+
+@app.command("download-model")
+def download_model(
+    model_path: Annotated[str, typer.Argument(help="HuggingFace model path (e.g. meta-llama/Llama-3-8B)")],
+    hf_token: Annotated[str, typer.Option(envvar="HF_TOKEN", help="HuggingFace token (or set HF_TOKEN env var)")] = "",
+):
+    """Download a model from HuggingFace Hub.
+
+    Examples::
+
+        sgldev dev download-model meta-llama/Llama-3-8B --hf-token hf_xxx
+        HF_TOKEN=hf_xxx sgldev dev download-model meta-llama/Llama-3-8B
+    """
+    env = os.environ.copy()
+    if hf_token:
+        env["HF_TOKEN"] = hf_token
+    elif not env.get("HF_TOKEN"):
+        raise typer.BadParameter("Provide --hf-token or set the HF_TOKEN environment variable.")
+
+    run(f"huggingface-cli download {model_path}", env=env)
