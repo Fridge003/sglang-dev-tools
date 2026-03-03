@@ -64,6 +64,17 @@ def setup_longbench():
     run(venv_cmd(LONGBENCH_VENV, "cd /sgl-workspace/LongBench && uv pip install -r requirements.txt"))
 
 
+# ---- Utility commands -------------------------------------------------------
+
+
+@app.command()
+def send_one(
+    port: Annotated[int, typer.Option()] = 30000,
+):
+    """Send a single test request to the server."""
+    run(f"python3 -m sglang.test.send_one --port {port}")
+
+
 # ---- Evaluation commands ---------------------------------------------------
 
 
