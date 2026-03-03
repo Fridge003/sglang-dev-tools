@@ -1,134 +1,144 @@
 """SGLang server launch helpers.
 
-Provides a flexible `launch` command that accepts common flags and forwards
-any extra arguments directly to `sglang.launch_server`, so you never need to
-modify this file just to pass a new flag.
+Provides pre-configured commands for launching DeepSeek-V3.2 in various
+parallelism and speculative-decoding configurations.
 """
 
+from dataclasses import dataclass
 from typing import Annotated
 
 import typer
 
 from sgldev.common import log_tag, run
-from sgldev.config import CUDA_VISIBLE_DEVICES, LOG_DIR, PORT
-from sgldev.config import HOST
+from sgldev.config import CUDA_VISIBLE_DEVICES, HOST, LOG_DIR, PORT
 
 app = typer.Typer(no_args_is_help=True)
 
 
-@app.command(
-    context_settings={"allow_extra_args": True, "allow_interspersed_args": False},
-)
-def launch(
-    ctx: typer.Context,
-    model_path: Annotated[str, typer.Option(help="HF model id or local path")] = "deepseek-ai/DeepSeek-V3-0324",
-    tp: Annotated[int, typer.Option(help="Tensor parallel size")] = 4,
-    dp: Annotated[int, typer.Option(help="Data parallel size (0 = disabled)")] = 0,
-    ep: Annotated[int, typer.Option(help="Expert parallel size (0 = disabled)")] = 0,
-    enable_dp_attention: Annotated[bool, typer.Option()] = False,
-    enable_dp_lm_head: Annotated[bool, typer.Option()] = False,
-    kv_cache_dtype: Annotated[str, typer.Option()] = "",
-    attention_backend: Annotated[str, typer.Option()] = "",
-    moe_runner_backend: Annotated[str, typer.Option()] = "",
-    moe_a2a_backend: Annotated[str, typer.Option()] = "",
-    moe_dense_tp_size: Annotated[int, typer.Option()] = 0,
-    quantization: Annotated[str, typer.Option()] = "",
-    speculative_algorithm: Annotated[str, typer.Option()] = "",
-    speculative_num_steps: Annotated[int, typer.Option()] = 0,
-    speculative_eagle_topk: Annotated[int, typer.Option()] = 0,
-    speculative_num_draft_tokens: Annotated[int, typer.Option()] = 0,
-    max_running_requests: Annotated[int, typer.Option()] = 0,
-    chunked_prefill_size: Annotated[int, typer.Option()] = 0,
-    cuda_graph_max_bs: Annotated[int, typer.Option()] = 0,
-    mem_fraction_static: Annotated[float, typer.Option()] = 0.0,
-    context_length: Annotated[int, typer.Option()] = 0,
-    disable_radix_cache: Annotated[bool, typer.Option()] = False,
-    disable_cuda_graph: Annotated[bool, typer.Option()] = False,
-    disable_shared_experts_fusion: Annotated[bool, typer.Option()] = False,
-    trust_remote_code: Annotated[bool, typer.Option()] = True,
-    host: Annotated[str, typer.Option()] = HOST,
-    port: Annotated[int, typer.Option()] = PORT,
-    env_vars: Annotated[str, typer.Option(help="Extra env vars, e.g. 'K1=V1 K2=V2'")] = "",
-    background: Annotated[bool, typer.Option(help="Run via nohup in background")] = True,
-    tee_log: Annotated[bool, typer.Option(help="Tee output to log file instead of nohup")] = False,
-):
-    """Launch sglang.launch_server with common options.
+# ---------------------------------------------------------------------------
+# DeepSeek-V3.2 launch configurations
+# ---------------------------------------------------------------------------
 
-    Any unrecognised flags after `--` are forwarded verbatim, e.g.:
 
-        sgldev server launch --model-path foo -- --tool-call-parser deepseekv32
-    """
-    parts: list[str] = []
+@dataclass
+class DeepSeekV32:
+    """Base launch configuration for DeepSeek-V3.2."""
 
-    parts.append(f"CUDA_VISIBLE_DEVICES={CUDA_VISIBLE_DEVICES}")
-    if env_vars:
-        parts.append(env_vars)
+    model_path: str = "deepseek-ai/DeepSeek-V3.2"
+    tp: int = 8
+    host: str = HOST
+    port: int = PORT
 
-    parts.append("python3 -m sglang.launch_server")
-    parts.append(f"--model-path {model_path}")
-    parts.append(f"--tp {tp}")
+    def extra_args(self) -> list[str]:
+        """Override in subclasses to add variant-specific arguments."""
+        return []
 
-    if dp:
-        parts.append(f"--dp {dp}")
-    if ep:
-        parts.append(f"--ep {ep}")
-    if enable_dp_attention:
-        parts.append("--enable-dp-attention")
-    if enable_dp_lm_head:
-        parts.append("--enable-dp-lm-head")
-    if kv_cache_dtype:
-        parts.append(f"--kv-cache-dtype {kv_cache_dtype}")
-    if attention_backend:
-        parts.append(f"--attention-backend {attention_backend}")
-    if moe_runner_backend:
-        parts.append(f"--moe-runner-backend {moe_runner_backend}")
-    if moe_a2a_backend:
-        parts.append(f"--moe-a2a-backend {moe_a2a_backend}")
-    if moe_dense_tp_size:
-        parts.append(f"--moe-dense-tp-size {moe_dense_tp_size}")
-    if quantization:
-        parts.append(f"--quantization {quantization}")
-    if speculative_algorithm:
-        parts.append(f"--speculative-algorithm {speculative_algorithm}")
-    if speculative_num_steps:
-        parts.append(f"--speculative-num-steps {speculative_num_steps}")
-    if speculative_eagle_topk:
-        parts.append(f"--speculative-eagle-topk {speculative_eagle_topk}")
-    if speculative_num_draft_tokens:
-        parts.append(f"--speculative-num-draft-tokens {speculative_num_draft_tokens}")
-    if max_running_requests:
-        parts.append(f"--max-running-requests {max_running_requests}")
-    if chunked_prefill_size:
-        parts.append(f"--chunked-prefill-size {chunked_prefill_size}")
-    if cuda_graph_max_bs:
-        parts.append(f"--cuda-graph-max-bs {cuda_graph_max_bs}")
-    if mem_fraction_static > 0:
-        parts.append(f"--mem-fraction-static {mem_fraction_static}")
-    if context_length:
-        parts.append(f"--context-length {context_length}")
-    if disable_radix_cache:
-        parts.append("--disable-radix-cache")
-    if disable_cuda_graph:
-        parts.append("--disable-cuda-graph")
-    if disable_shared_experts_fusion:
-        parts.append("--disable-shared-experts-fusion")
-    if trust_remote_code:
-        parts.append("--trust-remote-code")
+    def build_cmd(self) -> str:
+        parts = [
+            f"CUDA_VISIBLE_DEVICES={CUDA_VISIBLE_DEVICES}",
+            "python3 -m sglang.launch_server",
+            f"--model-path {self.model_path}",
+            f"--tp {self.tp}",
+        ]
+        parts.extend(self.extra_args())
+        parts.extend([f"--host {self.host}", f"--port {self.port}"])
+        return " ".join(parts)
 
-    parts.append(f"--host {host}")
-    parts.append(f"--port {port}")
 
-    if ctx.args:
-        parts.extend(ctx.args)
+@dataclass
+class DeepSeekV32TP8(DeepSeekV32):
+    """TP8 — pure tensor parallelism."""
 
-    cmd = " ".join(parts)
 
+@dataclass
+class DeepSeekV32DP8(DeepSeekV32):
+    """DP8 — data parallelism with DP attention."""
+
+    dp: int = 8
+
+    def extra_args(self) -> list[str]:
+        return [f"--dp {self.dp}", "--enable-dp-attention"]
+
+
+@dataclass
+class DeepSeekV32TP8MTP(DeepSeekV32):
+    """TP8 + MTP — speculative decoding via EAGLE."""
+
+    def extra_args(self) -> list[str]:
+        return [
+            "--speculative-algorithm EAGLE",
+            "--speculative-num-steps 3",
+            "--speculative-eagle-topk 1",
+            "--speculative-num-draft-tokens 4",
+        ]
+
+
+@dataclass
+class DeepSeekV32DP8MTP(DeepSeekV32DP8):
+    """DP8 + MTP — data parallelism with speculative decoding."""
+
+    def extra_args(self) -> list[str]:
+        return [
+            *super().extra_args(),
+            "--speculative-algorithm EAGLE",
+            "--speculative-num-steps 3",
+            "--speculative-eagle-topk 1",
+            "--speculative-num-draft-tokens 4",
+        ]
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _launch(config: DeepSeekV32, background: bool, tee_log: bool) -> None:
+    cmd = config.build_cmd()
     if tee_log:
         cmd += f" 2>&1 | tee {LOG_DIR}/server_{log_tag()}.log"
     elif background:
         cmd = f"nohup {cmd} > {LOG_DIR}/server_{log_tag()}.log 2>&1 &"
-
     run(cmd)
+
+
+# ---------------------------------------------------------------------------
+# CLI commands
+# ---------------------------------------------------------------------------
+
+_CONFIGS = {
+    (False, False): DeepSeekV32TP8,
+    (True, False): DeepSeekV32DP8,
+    (False, True): DeepSeekV32TP8MTP,
+    (True, True): DeepSeekV32DP8MTP,
+}
+
+
+@app.command()
+def dsv32(
+    tp: Annotated[bool, typer.Option("--tp", help="Enable TP=8 (tensor parallelism)")] = True,
+    dp: Annotated[bool, typer.Option("--dp", help="Enable DP=8 with DP attention")] = False,
+    mtp: Annotated[bool, typer.Option("--mtp", help="Enable MTP (EAGLE speculative decoding)")] = False,
+    host: Annotated[str, typer.Option()] = HOST,
+    port: Annotated[int, typer.Option()] = PORT,
+    background: Annotated[bool, typer.Option(help="Run via nohup in background")] = True,
+    tee_log: Annotated[bool, typer.Option(help="Tee output to log file")] = False,
+):
+    """Launch DeepSeek-V3.2.
+
+    Combine --tp, --dp, and --mtp to select a configuration:
+
+        sgldev server dsv32              # TP8 (default)
+        sgldev server dsv32 --dp         # DP8
+        sgldev server dsv32 --mtp        # TP8 + MTP
+        sgldev server dsv32 --dp --mtp   # DP8 + MTP
+    """
+    config_cls = _CONFIGS[(dp, mtp)]
+    _launch(config_cls(host=host, port=port), background, tee_log)
+
+
+# ---------------------------------------------------------------------------
+# Utility commands
+# ---------------------------------------------------------------------------
 
 
 @app.command()
