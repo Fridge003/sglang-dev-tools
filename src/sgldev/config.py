@@ -6,7 +6,7 @@ from sgldev.common import env, env_int
 # Shared
 # ---------------------------------------------------------------------------
 CUDA_VISIBLE_DEVICES = env("CUDA_VISIBLE_DEVICES", "0,1,2,3")
-LOG_DIR = env("LOG_DIR", "/data/logs")
+LOG_DIR = env("LOG_DIR", "/sgl-workspace/logs")
 HOST = env("HOST", "127.0.0.1")
 PORT = env_int("PORT", 30000)
 

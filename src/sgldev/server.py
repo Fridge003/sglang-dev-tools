@@ -5,6 +5,7 @@ parallelism and speculative-decoding configurations.
 """
 
 from dataclasses import dataclass
+import os
 from typing import Annotated
 
 import typer
@@ -35,7 +36,7 @@ class DeepSeekV32:
 
     def build_cmd(self) -> str:
         parts = [
-            f"CUDA_VISIBLE_DEVICES={CUDA_VISIBLE_DEVICES}",
+            # f"CUDA_VISIBLE_DEVICES={CUDA_VISIBLE_DEVICES}",
             "python3 -m sglang.launch_server",
             f"--model-path {self.model_path}",
             f"--tp {self.tp}",
@@ -93,6 +94,10 @@ class DeepSeekV32DP8MTP(DeepSeekV32DP8):
 
 
 def _launch(config: DeepSeekV32, background: bool, tee_log: bool) -> None:
+    # mkdir LOG_DIR if not exists
+    if not os.path.exists(LOG_DIR):
+        os.makedirs(LOG_DIR)
+
     cmd = config.build_cmd()
     if tee_log:
         cmd += f" 2>&1 | tee {LOG_DIR}/server_{log_tag()}.log"
