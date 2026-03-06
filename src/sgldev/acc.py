@@ -79,11 +79,13 @@ def send_one(
 
 
 @app.command()
-def sgl_gsm8k():
-    """Run GSM8K benchmark via bench_sglang (8-shot, 1319 questions)."""
+def sgl_gsm8k(
+    num_shots: Annotated[int, typer.Option()] = 8,
+):
+    """Run GSM8K benchmark via bench_sglang (1319 questions)."""
     run(
-        "python3 benchmark/gsm8k/bench_sglang.py "
-        "--num-shots 8 --num-questions 1319 --parallel 1319"
+        f"python3 benchmark/gsm8k/bench_sglang.py "
+        f"--num-shots {num_shots} --num-questions 1319 --parallel 1319"
     )
 
 
