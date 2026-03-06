@@ -14,6 +14,7 @@ pip install --force-reinstall git+https://github.com/Fridge003/sglang-dev-tools
 ```bash
 sgldev --help              # Show all command groups
 sgldev acc --help          # Accuracy evaluation benchmarks
+sgldev bench --help        # Benchmarking (bench_serving, etc.)
 sgldev server --help       # Server launch / health / kill
 sgldev profile --help      # Profiling (one-batch latency, serving throughput)
 sgldev docker --help       # Docker container management
