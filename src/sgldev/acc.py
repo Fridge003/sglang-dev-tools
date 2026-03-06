@@ -79,6 +79,15 @@ def send_one(
 
 
 @app.command()
+def sgl_gsm8k():
+    """Run GSM8K benchmark via bench_sglang (8-shot, 1319 questions)."""
+    run(
+        "python3 benchmark/gsm8k/bench_sglang.py "
+        "--num-shots 8 --num-questions 1319 --parallel 1319"
+    )
+
+
+@app.command()
 def run_gsm8k(
     temperature: Annotated[float, typer.Option()] = 0.0,
     max_tokens: Annotated[int, typer.Option()] = 50000,
