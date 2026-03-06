@@ -2,7 +2,7 @@
 
 from sgldev.server_launch._base import make_launch_command
 
-glm5 = make_launch_command("zai-org/GLM-5-FP8")
+glm5 = make_launch_command("zai-org/GLM-5-FP8", tp=8)
 glm5.__name__ = "glm5"
 glm5.__doc__ = """\
 Launch GLM-5.

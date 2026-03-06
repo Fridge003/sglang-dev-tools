@@ -95,7 +95,7 @@ def launch(config: LaunchConfig, background: bool, tee_log: bool) -> None:
 # ---------------------------------------------------------------------------
 
 
-def make_launch_command(default_model_path: str) -> Callable:
+def make_launch_command(default_model_path: str, tp: int = 8) -> Callable:
     """Create a CLI launch command for a model.
 
     Each boolean flag (--dp, --mtp, …) maps to an ``ExtraArgs`` strategy.
@@ -121,7 +121,7 @@ def make_launch_command(default_model_path: str) -> Callable:
     ) -> None:
         extras: list[ExtraArgs] = []
         if dp:
-            extras.append(DPArgs())
+            extras.append(DPArgs(dp=tp))
         if mtp:
             extras.append(MTPArgs())
 

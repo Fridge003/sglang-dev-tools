@@ -2,7 +2,7 @@
 
 from sgldev.server_launch._base import make_launch_command
 
-dsv32 = make_launch_command("deepseek-ai/DeepSeek-V3.2")
+dsv32 = make_launch_command("deepseek-ai/DeepSeek-V3.2", tp=8)
 dsv32.__name__ = "dsv32"
 dsv32.__doc__ = """\
 Launch DeepSeek-V3.2.
