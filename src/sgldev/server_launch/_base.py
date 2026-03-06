@@ -128,6 +128,6 @@ def make_launch_command(default_model_path: str, tp: int = 8) -> Callable:
             host=host,
             port=port,
         )
-        launch(config, tee_log, prefix=f"{default_model_path}_TP{tp}_DP{dp}_MTP{mtp}")
+        launch(config, tee_log, prefix=f"{default_model_path.split('/')[-1]}_TP{tp}_DP{dp}_MTP{mtp}")
 
     return command
