@@ -108,6 +108,12 @@ def logs(
     run(f"docker logs{follow_flag} --tail {tail} {name}")
 
 
+@app.command()
+def killer():
+    """Launch a privileged container with host PID namespace."""
+    run("docker run --rm -it --privileged --pid=host ubuntu")
+
+
 @app.command(name="list")
 def list_containers(
     all_containers: Annotated[bool, typer.Option("--all", "-a")] = False,
