@@ -27,6 +27,7 @@ def create(
     volumes: Annotated[list[str], typer.Option("-v", help="Extra volume mounts")] = [],
     envs: Annotated[list[str], typer.Option("-e", help="Extra env vars (K=V)")] = [],
     detach: Annotated[bool, typer.Option(help="Run in detached mode")] = True,
+    ptrace: Annotated[bool, typer.Option(help="Add SYS_PTRACE capability")] = False,
 ):
     """Create and start a new SGLang development container.
 
@@ -44,6 +45,8 @@ def create(
     parts.append(f"--shm-size {shm_size}")
     parts.append(f"--gpus {gpus}")
     parts.append("--ipc=host")
+    if ptrace:
+        parts.append("--cap-add SYS_PTRACE")
     parts.append(f"--name {name}")
 
     if cache_path:
