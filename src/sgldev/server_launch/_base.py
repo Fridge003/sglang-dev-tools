@@ -77,16 +77,16 @@ class LaunchConfig:
         return " ".join(parts)
 
 
-def launch(config: LaunchConfig, background: bool, tee_log: bool) -> None:
+def launch(config: LaunchConfig, tee_log: bool, prefix: str = "") -> None:
     """Execute the server launch command."""
     if not os.path.exists(LOG_DIR):
         os.makedirs(LOG_DIR)
 
     cmd = config.build_cmd()
     if tee_log:
-        cmd += f" 2>&1 | tee {LOG_DIR}/server_{log_tag()}.log"
-    elif background:
-        cmd = f"nohup {cmd} > {LOG_DIR}/server_{log_tag()}.log 2>&1 &"
+        cmd += f" 2>&1 | tee {LOG_DIR}/{prefix}_{log_tag()}.log"
+    else:
+        cmd = f"nohup {cmd} > {LOG_DIR}/{prefix}_{log_tag()}.log 2>&1 &"
     run(cmd)
 
 
@@ -112,9 +112,6 @@ def make_launch_command(default_model_path: str, tp: int = 8) -> Callable:
         ] = False,
         host: Annotated[str, typer.Option()] = HOST,
         port: Annotated[int, typer.Option()] = PORT,
-        background: Annotated[
-            bool, typer.Option(help="Run via nohup in background")
-        ] = True,
         tee_log: Annotated[
             bool, typer.Option(help="Tee output to log file")
         ] = False,
@@ -131,6 +128,6 @@ def make_launch_command(default_model_path: str, tp: int = 8) -> Callable:
             host=host,
             port=port,
         )
-        launch(config, background, tee_log)
+        launch(config, tee_log, prefix=f"{default_model_path}_TP{tp}_DP{dp}_MTP{mtp}")
 
     return command
