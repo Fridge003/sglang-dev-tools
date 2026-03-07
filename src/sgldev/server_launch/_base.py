@@ -63,6 +63,7 @@ class LaunchConfig:
     tp: int = 8
     host: str = HOST
     port: int = PORT
+    fixed_args: list[str] = field(default_factory=list)
     extras: list[ExtraArgs] = field(default_factory=list)
 
     def build_cmd(self) -> str:
@@ -71,6 +72,7 @@ class LaunchConfig:
             f"--model-path {self.model_path}",
             f"--tp {self.tp}",
         ]
+        parts.extend(self.fixed_args)
         for extra in self.extras:
             parts.extend(extra.args())
         parts.extend([f"--host {self.host}", f"--port {self.port}"])
@@ -95,12 +97,16 @@ def launch(config: LaunchConfig, tee_log: bool, prefix: str = "") -> None:
 # ---------------------------------------------------------------------------
 
 
-def make_launch_command(default_model_path: str, tp: int = 8) -> Callable:
+def make_launch_command(
+    default_model_path: str, tp: int = 8, fixed_args: list[str] | None = None
+) -> Callable:
     """Create a CLI launch command for a model.
 
     Each boolean flag (--dp, --mtp, …) maps to an ``ExtraArgs`` strategy.
     When a flag is enabled its extra arguments are appended to the command.
     """
+
+    fixed_args = fixed_args or []
 
     def command(
         dp: Annotated[
@@ -124,6 +130,8 @@ def make_launch_command(default_model_path: str, tp: int = 8) -> Callable:
 
         config = LaunchConfig(
             model_path=default_model_path,
+            tp=tp,
+            fixed_args=fixed_args,
             extras=extras,
             host=host,
             port=port,
