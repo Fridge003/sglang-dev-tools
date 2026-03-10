@@ -71,6 +71,7 @@ class LaunchConfig:
             "python3 -m sglang.launch_server",
             f"--model-path {self.model_path}",
             f"--tp {self.tp}",
+            "--trust-remote-code",
         ]
         parts.extend(self.fixed_args)
         for extra in self.extras:
