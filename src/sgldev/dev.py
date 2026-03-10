@@ -55,3 +55,17 @@ def download_model(
         raise typer.BadParameter("Provide --hf-token or set the HF_TOKEN environment variable.")
 
     run(f"huggingface-cli download {model_path}", env=env)
+
+
+@app.command("create-uv")
+def create_uv(
+    python: Annotated[str, typer.Option(help="Python version for the venv")] = "3.12",
+):
+    """Create a uv virtual environment in /sgl-workspace.
+
+    Examples::
+
+        sgldev dev create-uv
+        sgldev dev create-uv --python 3.11
+    """
+    run(f"cd /sgl-workspace && uv venv sgl --python {python} && source sgl/bin/activate && python -m ensurepip --upgrade")
