@@ -36,6 +36,13 @@ def setup_sglang(
         run(f'cd /sgl-workspace/sglang && git config --local user.email "{email}"')
 
 
+@app.command("setup-cursor")
+def setup_cursor():
+    """Setup cursor extensions."""
+    run(f"cursor --install-extension ms-python.python")
+    run(f"cursor --install-extension eamodio.gitlens")
+
+
 @app.command("download-model")
 def download_model(
     model_path: Annotated[str, typer.Argument(help="HuggingFace model path (e.g. meta-llama/Llama-3-8B)")],
@@ -68,4 +75,5 @@ def create_uv(
         sgldev dev create-uv
         sgldev dev create-uv --python 3.11
     """
-    run(f"cd /sgl-workspace && uv venv sgl --python {python} && source sgl/bin/activate && python -m ensurepip --upgrade")
+    run(f"cd /sgl-workspace && uv venv sgl --python {python}")
+    run(f"source /sgl-workspace/sgl/bin/activate && python -m ensurepip --upgrade")
