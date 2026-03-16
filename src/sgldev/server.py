@@ -43,4 +43,4 @@ def kill(
     port: Annotated[int, typer.Option()] = PORT,
 ):
     """Kill SGLang server process(es) listening on the given port."""
-    run(f"fuser -k {port}/tcp || true")
+    run(f"kill -9 $(lsof -t -i:{port})")
