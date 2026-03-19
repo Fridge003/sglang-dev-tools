@@ -68,7 +68,7 @@ class LaunchConfig:
 
     def build_cmd(self) -> str:
         parts = [
-            "python3 -m sglang.launch_server",
+            "sglang serve",
             f"--model-path {self.model_path}",
             f"--tp {self.tp}",
             "--trust-remote-code",
