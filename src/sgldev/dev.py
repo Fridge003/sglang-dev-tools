@@ -34,7 +34,7 @@ def setup_sglang(
         run(f'cd /sgl-workspace/sglang && git config --local user.name "{name}"')
     if email:
         run(f'cd /sgl-workspace/sglang && git config --local user.email "{email}"')
-    run(f"apt update && apt install gh")
+    run(f"apt update && apt install gh && echo {github_token} | gh auth login --with-token")
 
 
 @app.command("setup-cursor")
