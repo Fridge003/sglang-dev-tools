@@ -65,6 +65,19 @@ def download_model(
     run(f"huggingface-cli download {model_path}", env=env)
 
 
+@app.command("kill-action")
+def force_kill(
+    action_id: Annotated[str, typer.Argument(help="GitHub Actions run ID to force-cancel")],
+):
+    """Force-cancel a GitHub Actions workflow run.
+
+    Examples::
+
+        sgldev dev force-kill 12345678901
+    """
+    run(f"gh api repos/sgl-project/sglang/actions/runs/{action_id}/force-cancel -X POST")
+
+
 @app.command("create-uv")
 def create_uv(
     python: Annotated[str, typer.Option(help="Python version for the venv")] = "3.12",

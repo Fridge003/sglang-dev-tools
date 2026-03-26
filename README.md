@@ -19,6 +19,7 @@ sgldev server --help       # Server launch / health / kill
 sgldev profile --help      # Profiling (one-batch latency, serving throughput)
 sgldev docker --help       # Docker container management
 sgldev ssh --help          # SSH connection and rsync operations
+sgldev dev --help          # All kinds of helpful commands
 ```
 
 ## Adding a new command group
