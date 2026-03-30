@@ -113,7 +113,7 @@ def sync(
         parts.append("--delete")
     if dry_run:
         parts.append("--dry-run")
-    for pat in exclude:
+    for pat in [".claude", "CLAUDE.md", *exclude]:
         parts.append(f"--exclude '{pat}'")
     parts.extend([local, remote])
 
