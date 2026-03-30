@@ -25,14 +25,15 @@ def setup_sglang(
     if not github_token:
         raise typer.BadParameter("GitHub token is required.")
 
+    run(f"cd /sgl-workspace/sglang && git config --global --add safe.directory /sgl-workspace/sglang")
     run(f"cd /sgl-workspace/sglang && pre-commit install")
     run(f"cd /sgl-workspace/sglang && pip install -e python")
-    if not name and not email:
-        raise typer.BadParameter("Provide at least one of --name or --email.")
-    if name:
-        run(f'cd /sgl-workspace/sglang && git config --local user.name "{name}"')
-    if email:
-        run(f'cd /sgl-workspace/sglang && git config --local user.email "{email}"')
+    # if not name and not email:
+    #     raise typer.BadParameter("Provide at least one of --name or --email.")
+    # if name:
+    #     run(f'cd /sgl-workspace/sglang && git config --local user.name "{name}"')
+    # if email:
+    #     run(f'cd /sgl-workspace/sglang && git config --local user.email "{email}"')
     run(f"apt update && apt install gh && echo {github_token} | gh auth login --with-token")
 
 
