@@ -7,6 +7,106 @@ If Claude finds any error in the commands here, please update it instantly.
 
 SGLang is a high-performance serving framework for large language models (LLMs) and multimodal models. It features RadixAttention for prefix caching, a zero-overhead CPU scheduler, prefill-decode disaggregation, speculative decoding, continuous batching, and broad hardware support (NVIDIA, AMD, Intel, TPU, Ascend NPU).
 
+## Modify a branch locally and push
+
+### Fetch
+First fetch the branch:
+```bash
+# If it's a branch in origin
+git fetch origin
+git checkout <branch-name>
+
+# If it's from a pr
+gh pr checkout <pr-number>
+```
+
+### Lint
+To fix lint for the current branch:
+```bash
+# If pre-commit is not installed
+pre-commit install
+
+pre-commit run --all-files
+```
+Then commit the changed files.
+
+### Push
+When pushing to the remote, if we are pushing to a branch under origin remote,
+```bash
+git push origin HEAD:<branch-name>
+```
+will be good.
+
+But if we are pushing to a PR branch, please first add the remote repo of that PR with
+```bash
+git remote add push-pr <repo-url>
+```
+Then push with
+```bash
+git push push-pr
+```
+Finally cleanup this tmp remote
+```bash
+git remote remove push-pr
+```
+
+## How to set up testing environemnt 
+
+### Step 1: Log into machine
+```bash
+# H200
+xxx
+
+# B200
+xxx
+```
+
+If there is any local change needed to be synced, please sync with:
+```bash
+sgldev ssh sync b200 # Can also be h200, depends on the machine specified
+```
+
+### Step 2: Create docker container `sglang_baizhou` if it isn't created
+First install the development tool kits:
+```bash
+pip install --force-reinstall git+https://github.com/Fridge003/sglang-dev-tools --break-system-packages
+```
+
+If the docker has been created, just exec into that container:
+```bash
+sgldev docker exec
+```
+Else launch the docker `sglang_baizhou` with
+```bash
+sgldev docker create
+```
+
+
+### Step 4: Setup environment inside `sglang_baizhou` container
+```bash
+pip install --force-reinstall git+https://github.com/Fridge003/sglang-dev-tools
+
+# Check the login (setup) status 
+gh auth status
+
+# If the user has logged in, no need to do anything
+# If there is no user logged in, then run following commands.
+sgldev dev setup-sglang <github-key>
+```
+
+### Step 5: Then execute the test commands as you wish. Remember to create a new worktree for modified codes.
+Each time when you checkout to a different branch, remember to reinstall the sglang environment through
+```bash
+pip install -e python
+```
+The sgl_kernel package should be reinstalled through
+```bash
+pip install sglang_kernel --force-reinstall
+```
+If out-of-memory happens due to GPU occupied by other users, shift to empty GPUs with `CUDA_VISIBLE_DEVICES` environ.
+
+
+
 ## Build & Install
 
 ```bash
@@ -142,49 +242,6 @@ The Scheduler (`srt/managers/scheduler.py`) is the core orchestrator:
 - `/debug-cuda-crash` - Debugging CUDA crashes with kernel API logging
 - `/generate-profile` - E2E profiling trace generation
 - `/sglang-bisect-ci-regression` - Bisecting CI regressions
-
-
-## How to set up test environemnt 
-
-### Step 1: Log into machine
-```bash
-# H200
-ssh xxx
-
-# B200
-ssh xxx
-```
-
-### Step 2: Create docker container `sglang_baizhou` if it isn't created
-```bash
-docker run -itd --shm-size 32g --gpus all --ipc=host --name sglang_baizhou -v "/data/.cache/":/root/.cache lmsysorg/sglang:dev /bin/zsh
-```
-If the docker has been created, just exec into that container:
-```bash
-docker exec -it sglang_baizhou /bin/zsh
-```
-
-### Step 4: Setup environment inside `sglang_baizhou` container
-```bash
-pip install --force-reinstall git+https://github.com/Fridge003/sglang-dev-tools
-
-# Check the login (setup) status 
-gh auth status
-
-# If the user has logged in, no need to do anything
-# If there is no user logged in, then run following commands.
-sgldev dev setup-sglang <github_user_key>
-```
-
-### Step 5: Then execute the test commands as you wish. Remember to create a new worktree for modified codes.
-Each time when you checkout to a different branch, remember to reinstall the sglang environment through
-```bash
-pip install -e python
-```
-The sgl_kernel package should be reinstalled through
-```bash
-pip install sglang_kernel --force-reinstall
-```
 
 ## sglang-dev-tools (`sgldev`) CLI Reference
 
