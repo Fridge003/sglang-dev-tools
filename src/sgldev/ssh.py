@@ -9,6 +9,7 @@ from sgldev.aliases import list_all as server_list_all
 from sgldev.aliases import remove as server_remove
 from sgldev.aliases import resolve as server_resolve
 from sgldev.common import run
+from sgldev.config import DEFAULT_SGLANG_PATH
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -72,60 +73,49 @@ def connect(
     run(" ".join(parts))
 
 
+
+# ── Server management commands ────────────────────────────────────────
+
+
 @app.command()
-def rsync(
-    src: Annotated[str, typer.Argument(help="Source path (local or remote)")],
-    dst: Annotated[str, typer.Argument(help="Destination path (local or remote)")],
-    server: Annotated[str, typer.Option(help="Server name (defined via 'sgldev ssh server-set')")] = "",
-    to_remote: Annotated[bool, typer.Option(help="Copy local src → remote dst")] = True,
-    delete: Annotated[bool, typer.Option(help="Delete extraneous files on receiver")] = False,
+def sync(
+    server: Annotated[str, typer.Argument(help="Server name (defined via 'sgldev ssh server-set')")],
+    local_path: Annotated[str, typer.Option(help="Local sglang directory")] = ".",
+    remote_path: Annotated[str, typer.Option(help="Remote sglang directory")] = DEFAULT_SGLANG_PATH,
+    delete: Annotated[bool, typer.Option(help="Delete remote files not in local")] = False,
     dry_run: Annotated[bool, typer.Option(help="Show what would be transferred")] = False,
     exclude: Annotated[list[str], typer.Option(help="Patterns to exclude")] = [],
 ):
-    """Rsync files between local and remote machines.
-
-    By default copies *to* the remote (``--to-remote``).
-    Pass ``--no-to-remote`` to pull *from* the remote instead.
+    """Sync local sglang folder to a remote server via rsync.
 
     Examples::
 
-        # push local dir to remote
-        sgldev ssh rsync ./data /data --server mybox
-
-        # pull from remote
-        sgldev ssh rsync /data/results ./results --server mybox --no-to-remote
+        sgldev ssh sync mybox
+        sgldev ssh sync mybox --local-path /home/me/sglang --remote-path ~/sglang
+        sgldev ssh sync mybox --delete --exclude __pycache__ --exclude .git
     """
     user, host, key, port = _resolve_server(server)
 
-    ssh_cmd = "ssh"
+    ssh_cmd_parts = ["ssh"]
     if key:
-        ssh_cmd += f" -i {key}"
-    if port != 22:
-        ssh_cmd += f" -p {port}"
+        ssh_cmd_parts.append(f"-i {key}")
+    if port:
+        ssh_cmd_parts.append(f"-p {port}")
+    ssh_cmd = " ".join(ssh_cmd_parts)
 
-    parts = ["rsync", "-avz", "--progress"]
-    parts.append(f'-e "{ssh_cmd}"')
+    local = local_path.rstrip("/") + "/"
+    remote = f"{user}@{host}:{remote_path}"
 
+    parts = ["rsync", "-avz", "-e", f'"{ssh_cmd}"']
     if delete:
         parts.append("--delete")
     if dry_run:
         parts.append("--dry-run")
     for pat in exclude:
         parts.append(f"--exclude '{pat}'")
-
-    remote_prefix = f"{user}@{host}:"
-
-    if to_remote:
-        parts.append(src)
-        parts.append(f"{remote_prefix}{dst}")
-    else:
-        parts.append(f"{remote_prefix}{src}")
-        parts.append(dst)
+    parts.extend([local, remote])
 
     run(" ".join(parts))
-
-
-# ── Server management commands ────────────────────────────────────────
 
 
 @app.command("server-set")

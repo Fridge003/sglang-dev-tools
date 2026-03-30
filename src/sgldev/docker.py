@@ -4,8 +4,10 @@ from typing import Annotated
 
 import typer
 
+import os
+
 from sgldev.common import env, run
-from sgldev.config import DEFAULT_CACHE, DEFAULT_CONTAINER, DEFAULT_IMAGE, DEFAULT_SHM
+from sgldev.config import DEFAULT_CACHE, DEFAULT_CONTAINER, DEFAULT_IMAGE, DEFAULT_SHM, DEFAULT_SGLANG_PATH
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -36,6 +38,8 @@ def create(
     Example:
         sgldev docker create --name mydev --cache-path /data/hf-cache --hf-token <huggingface_token>
     """
+    os.makedirs(DEFAULT_SGLANG_PATH, exist_ok=True)
+
     parts = ["docker run"]
     if detach:
         parts.append("-itd")
@@ -51,6 +55,8 @@ def create(
 
     if cache_path:
         parts.append(f'-v "{cache_path}":/root/.cache')
+
+    parts.append(f'-v "{DEFAULT_SGLANG_PATH}":/sgl-workspace/sglang')
 
     for v in volumes:
         parts.append(f'-v "{v}"')
