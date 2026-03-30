@@ -38,7 +38,8 @@ def create(
     Example:
         sgldev docker create --name mydev --cache-path /data/hf-cache --hf-token <huggingface_token>
     """
-    assert Path(DEFAULT_SGLANG_PATH).exists(), f"Mounted sglang path does not exist: {DEFAULT_SGLANG_PATH}"
+    sglang_path = Path(DEFAULT_SGLANG_PATH).expanduser().resolve()
+    assert sglang_path.exists(), f"Mounted sglang path does not exist: {sglang_path}"
 
     parts = ["docker run"]
     if detach:
@@ -56,7 +57,7 @@ def create(
     if cache_path:
         parts.append(f'-v "{cache_path}":/root/.cache')
 
-    parts.append(f'-v "{DEFAULT_SGLANG_PATH}":/sgl-workspace/sglang')
+    parts.append(f'-v "{str(sglang_path)}":/sgl-workspace/sglang')
 
     for v in volumes:
         parts.append(f'-v "{v}"')
