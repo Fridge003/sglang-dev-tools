@@ -1,6 +1,6 @@
 """SSH and rsync helpers for remote machine access."""
 
-import os
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -105,7 +105,7 @@ def sync(
     ssh_cmd = " ".join(ssh_cmd_parts)
 
     local = local_path.rstrip("/") + "/"
-    os.makedirs(remote_path, exist_ok=True)
+    Path(remote_path).mkdir(parents=True, exist_ok=True)
     remote = f"{user}@{host}:{remote_path}"
 
     parts = ["rsync", "-avz", "-e", f'"{ssh_cmd}"']

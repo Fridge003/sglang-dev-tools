@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-import os
+from pathlib import Path
 from typing import Annotated, Callable
 
 import typer
@@ -82,8 +82,7 @@ class LaunchConfig:
 
 def launch(config: LaunchConfig, tee_log: bool, prefix: str = "") -> None:
     """Execute the server launch command."""
-    if not os.path.exists(LOG_DIR):
-        os.makedirs(LOG_DIR)
+    Path(LOG_DIR).mkdir(parents=True, exist_ok=True)
 
     cmd = config.build_cmd()
     if tee_log:

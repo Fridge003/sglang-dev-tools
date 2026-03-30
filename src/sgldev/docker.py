@@ -4,7 +4,7 @@ from typing import Annotated
 
 import typer
 
-import os
+from pathlib import Path
 
 from sgldev.common import env, run
 from sgldev.config import DEFAULT_CACHE, DEFAULT_CONTAINER, DEFAULT_IMAGE, DEFAULT_SHM, DEFAULT_SGLANG_PATH
@@ -38,7 +38,7 @@ def create(
     Example:
         sgldev docker create --name mydev --cache-path /data/hf-cache --hf-token <huggingface_token>
     """
-    os.makedirs(DEFAULT_SGLANG_PATH, exist_ok=True)
+    Path(DEFAULT_SGLANG_PATH).mkdir(parents=True, exist_ok=True)
 
     parts = ["docker run"]
     if detach:

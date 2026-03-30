@@ -4,6 +4,7 @@ import os
 import random
 import subprocess
 import time
+from pathlib import Path
 
 
 def env(key: str, default: str = "") -> str:
@@ -28,7 +29,7 @@ def log_tag() -> str:
 
 
 def ensure_dir(path: str) -> None:
-    os.makedirs(path, exist_ok=True)
+    Path(path).mkdir(parents=True, exist_ok=True)
 
 
 def venv_cmd(venv_dir: str, cmd: str) -> str:
