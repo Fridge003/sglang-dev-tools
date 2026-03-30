@@ -38,7 +38,7 @@ def create(
     Example:
         sgldev docker create --name mydev --cache-path /data/hf-cache --hf-token <huggingface_token>
     """
-    Path(DEFAULT_SGLANG_PATH).mkdir(parents=True, exist_ok=True)
+    assert Path(DEFAULT_SGLANG_PATH).exists(), f"Mounted sglang path does not exist: {DEFAULT_SGLANG_PATH}"
 
     parts = ["docker run"]
     if detach:
