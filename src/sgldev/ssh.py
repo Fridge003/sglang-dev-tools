@@ -77,8 +77,8 @@ def connect(
 # ── Server management commands ────────────────────────────────────────
 
 
-@app.command()
-def sync(
+@app.command("sync-up")
+def sync_up(
     server: Annotated[str, typer.Argument(help="Server name (defined via 'sgldev ssh server-set')")],
     local_path: Annotated[str, typer.Option(help="Local sglang directory")] = ".",
     remote_path: Annotated[str, typer.Option(help="Remote sglang directory")] = DEFAULT_SGLANG_PATH,
@@ -86,13 +86,13 @@ def sync(
     dry_run: Annotated[bool, typer.Option(help="Show what would be transferred")] = False,
     exclude: Annotated[list[str], typer.Option(help="Patterns to exclude")] = [],
 ):
-    """Sync local sglang folder to a remote server via rsync.
+    """Sync local sglang folder to a remote server via rsync (upload).
 
     Examples::
 
-        sgldev ssh sync mybox
-        sgldev ssh sync mybox --local-path /home/me/sglang --remote-path ~/sglang
-        sgldev ssh sync mybox --delete --exclude __pycache__ --exclude .git
+        sgldev ssh sync-up mybox
+        sgldev ssh sync-up mybox --local-path /home/me/sglang --remote-path ~/sglang
+        sgldev ssh sync-up mybox --delete --exclude __pycache__ --exclude .git
     """
     user, host, key, port = _resolve_server(server)
 
@@ -116,6 +116,47 @@ def sync(
     for pat in [".claude", "CLAUDE.md", *exclude]:
         parts.append(f"--exclude '{pat}'")
     parts.extend([local, remote])
+
+    run(" ".join(parts))
+
+
+@app.command("sync-down")
+def sync_down(
+    server: Annotated[str, typer.Argument(help="Server name (defined via 'sgldev ssh server-set')")],
+    local_path: Annotated[str, typer.Option(help="Local sglang directory")] = ".",
+    remote_path: Annotated[str, typer.Option(help="Remote sglang directory")] = DEFAULT_SGLANG_PATH,
+    delete: Annotated[bool, typer.Option(help="Delete local files not in remote")] = False,
+    dry_run: Annotated[bool, typer.Option(help="Show what would be transferred")] = False,
+    exclude: Annotated[list[str], typer.Option(help="Patterns to exclude")] = [],
+):
+    """Sync remote sglang folder to local via rsync (download).
+
+    Examples::
+
+        sgldev ssh sync-down mybox
+        sgldev ssh sync-down mybox --local-path /home/me/sglang --remote-path ~/sglang
+        sgldev ssh sync-down mybox --delete --exclude __pycache__ --exclude .git
+    """
+    user, host, key, port = _resolve_server(server)
+
+    ssh_cmd_parts = ["ssh"]
+    if key:
+        ssh_cmd_parts.append(f"-i {key}")
+    if port:
+        ssh_cmd_parts.append(f"-p {port}")
+    ssh_cmd = " ".join(ssh_cmd_parts)
+
+    remote = f"{user}@{host}:{remote_path.rstrip('/')}/"
+    local = local_path.rstrip("/") + "/"
+
+    parts = ["rsync", "-avz", "-e", f'"{ssh_cmd}"']
+    if delete:
+        parts.append("--delete")
+    if dry_run:
+        parts.append("--dry-run")
+    for pat in [".claude", "CLAUDE.md", *exclude]:
+        parts.append(f"--exclude '{pat}'")
+    parts.extend([remote, local])
 
     run(" ".join(parts))
 
