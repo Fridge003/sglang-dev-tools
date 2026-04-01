@@ -113,7 +113,7 @@ def sync_up(
         parts.append("--delete")
     if dry_run:
         parts.append("--dry-run")
-    for pat in [".claude", "CLAUDE.md", *exclude]:
+    for pat in [".claude", "CLAUDE.md", ".git", *exclude]:
         parts.append(f"--exclude '{pat}'")
     parts.extend([local, remote])
 
@@ -154,7 +154,7 @@ def sync_down(
         parts.append("--delete")
     if dry_run:
         parts.append("--dry-run")
-    for pat in [".claude", "CLAUDE.md", *exclude]:
+    for pat in [".claude", "CLAUDE.md", ".git", *exclude]:
         parts.append(f"--exclude '{pat}'")
     parts.extend([remote, local])
 
