@@ -5,7 +5,7 @@ from typing import Annotated
 import typer
 
 from sgldev.common import run
-from sgldev.config import HOST, PORT
+from sgldev.config import HOST, PORT, SGLANG_TORCH_PROFILER_DIR
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -23,7 +23,7 @@ def one_batch(
     skip_warmup: Annotated[bool, typer.Option()] = True,
     profile: Annotated[bool, typer.Option()] = True,
     profile_steps: Annotated[int, typer.Option()] = 10,
-    profiler_dir: Annotated[str, typer.Option(help="SGLANG_TORCH_PROFILER_DIR")] = "",
+    profiler_dir: Annotated[str, typer.Option(help="SGLANG_TORCH_PROFILER_DIR")] = SGLANG_TORCH_PROFILER_DIR,
 ):
     """Run sglang.bench_one_batch_server for single-batch latency profiling.
 

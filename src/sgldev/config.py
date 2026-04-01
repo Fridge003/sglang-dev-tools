@@ -21,6 +21,13 @@ NS_VENV = env("NS_VENV", "/sgl-workspace/ns-venv")
 LMEVAL_VENV = env("LMEVAL_VENV", "/sgl-workspace/lmeval-venv")
 LONGBENCH_VENV = env("LONGBENCH_VENV", "/sgl-workspace/longbench-venv")
 
+
+# ---------------------------------------------------------------------------
+# Profile (profile.py)
+# ---------------------------------------------------------------------------
+SGLANG_TORCH_PROFILER_DIR = env("SGLANG_TORCH_PROFILER_DIR", "/sgl-workspace/sglang")
+
+
 # ---------------------------------------------------------------------------
 # Dev (dev.py)
 # ---------------------------------------------------------------------------
