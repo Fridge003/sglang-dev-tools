@@ -91,3 +91,13 @@ def create_uv(
     """
     run(f"cd /sgl-workspace && uv venv sgl --python {python}")
     run(f"source /sgl-workspace/sgl/bin/activate && python -m ensurepip --upgrade")
+
+
+@app.command("claude")
+def claude():
+    """Create a claude with custom setting
+    Examples::
+
+        sgldev dev claude
+    """
+    run(f"claude --dangerously-skip-permissions --worktree")
