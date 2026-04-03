@@ -25,7 +25,7 @@ def setup_sglang(
     if not github_token:
         raise typer.BadParameter("GitHub token is required.")
 
-    # run(f"cd /sgl-workspace/sglang && git config --global --add safe.directory /sgl-workspace/sglang")
+    run(f"cd /sgl-workspace/sglang && git config --global --add safe.directory /sgl-workspace/sglang")
     run(f"cd /sgl-workspace/sglang && pre-commit install")
     run(f"cd /sgl-workspace/sglang && pip install -e python")
     if not name and not email:
