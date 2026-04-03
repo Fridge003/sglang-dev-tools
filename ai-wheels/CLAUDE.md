@@ -52,7 +52,10 @@ git remote remove push-pr
 
 ## How to set up testing environemnt 
 
+
 ### Step 1: Log into machine
+Usually the machine name should be specified in the prompt (h200, h200-2, b200), else ask user the concrete command for accessing.
+
 ```bash
 # H200
 xxx
@@ -61,9 +64,9 @@ xxx
 xxx
 ```
 
-If there is any local change needed to be synced, please sync with:
+If there is any local change needed to be synced to remote, please sync with:
 ```bash
-sgldev ssh sync b200 # Can also be h200, depends on the machine specified
+sgldev ssh sync-up <machine_name> # Can be h200/b200..., depends on the machine specified
 ```
 
 ### Step 2: Create docker container `sglang_baizhou` if it isn't created
@@ -105,8 +108,6 @@ pip install sglang_kernel --force-reinstall
 ```
 If out-of-memory happens due to GPU occupied by other users, shift to empty GPUs with `CUDA_VISIBLE_DEVICES` environ.
 
-
-
 ## Build & Install
 
 ```bash
@@ -116,7 +117,11 @@ pip install -e "python[test]" # For some testing dependencies
 
 The pyproject.toml is at `python/pyproject.toml`. Hardware-specific variants exist: `pyproject_cpu.toml`, `pyproject_npu.toml`, `pyproject_xpu.toml`.
 
-sgl-kernel (AOT CUDA/C++ kernels) is a separate package in `sgl-kernel/` with its own build system (CMake).
+For sgl-kernel (AOT CUDA/C++ kernels) building, it is a separate package in `sgl-kernel/` with its own build system (CMake). It's recommended to create a new window with tmux and run
+```bash
+cd sgl-kernel
+make build
+```
 
 ## Running the Server
 
@@ -242,99 +247,4 @@ The Scheduler (`srt/managers/scheduler.py`) is the core orchestrator:
 - `/debug-cuda-crash` - Debugging CUDA crashes with kernel API logging
 - `/generate-profile` - E2E profiling trace generation
 - `/sglang-bisect-ci-regression` - Bisecting CI regressions
-
-## sglang-dev-tools (`sgldev`) CLI Reference
-
-Installed via `pip install --force-reinstall git+https://github.com/Fridge003/sglang-dev-tools`. Entry point: `sgldev`.
-
-### `sgldev dev` -- Development Helpers
-
-| Command | Description |
-|---|---|
-| `sgldev dev setup-sglang <GITHUB_TOKEN>` | Clone sglang, install pre-commit hooks, pip install, configure git, authenticate gh CLI. Options: `--name`, `--email` |
-| `sgldev dev setup-cursor` | Install Cursor IDE extensions (Python, GitLens) |
-| `sgldev dev download-model <MODEL_PATH>` | Download a model from HuggingFace Hub. Options: `--hf-token` |
-| `sgldev dev kill-action <ACTION_ID>` | Force-cancel a GitHub Actions workflow run on sgl-project/sglang |
-| `sgldev dev create-uv` | Create a uv virtual environment at `/sgl-workspace/sgl`. Options: `--python` (default 3.12) |
-
-### `sgldev docker` -- Docker Container Management
-
-| Command | Description |
-|---|---|
-| `sgldev docker create` | Create and start a new SGLang dev container. Options: `--name`, `--image`, `--cache-path`, `--hf-token`, `--shm-size` (32g), `--gpus`, `-v`, `-e`, `--ptrace` |
-| `sgldev docker exec` | Exec into a running container. Options: `--name`, `--shell` |
-| `sgldev docker pull` | Pull the latest image from registry |
-| `sgldev docker rm` | Remove a container. Options: `--name`, `--force` |
-| `sgldev docker logs <NAME>` | Show container logs. Options: `-f`, `--tail` |
-| `sgldev docker killer` | Launch a privileged container with host PID namespace (for debugging) |
-| `sgldev docker list` | List containers. Options: `--all/-a`, `--filter-name` |
-
-### `sgldev server` -- Server Management
-
-| Command | Description |
-|---|---|
-| `sgldev server health` | Check if the SGLang server is healthy. Options: `--host`, `--port` |
-| `sgldev server flush` | Flush all KV cache contents. Options: `--host`, `--port` |
-| `sgldev server kill` | Kill SGLang server process(es). Options: `--port` (default 30000) |
-
-#### `sgldev server launch` -- Model-Specific Server Launch
-
-All launch commands support: `--dp` (data parallelism), `--mtp` (speculative decoding), `--host`, `--port`, `--tee-log`.
-
-| Command | Model | Default TP |
-|---|---|---|
-| `sgldev server launch dsv32` | `deepseek-ai/DeepSeek-V3.2` | TP=8 |
-| `sgldev server launch dsv32-fp4` | `nvidia/DeepSeek-V3.2-NVFP4` (quantization: modelopt_fp4) | TP=4 |
-| `sgldev server launch glm5` | `zai-org/GLM-5-FP8` | TP=8 |
-| `sgldev server launch kimi25` | `moonshotai/Kimi-K2.5` | TP=8 |
-| `sgldev server launch qwen3-8b` | `Qwen/Qwen3-8B` | TP=1 |
-| `sgldev server launch qwen3-30b` | `Qwen/Qwen3-30B-A3B` | TP=1 |
-
-### `sgldev acc` -- Accuracy Evaluation Benchmarks
-
-#### Setup
-
-| Command | Description |
-|---|---|
-| `sgldev acc setup-lmeval` | Set up lm-evaluation-harness in a dedicated venv |
-| `sgldev acc setup-ns` | Set up NVIDIA NeMo Skills (requires `HF_TOKEN`; prepares MMLU, AIME24, AIME25, GPQA data) |
-| `sgldev acc setup-longbench` | Set up LongBench in a dedicated venv |
-
-#### Evaluations
-
-| Command | Key Options | Description |
-|---|---|---|
-| `sgldev acc send-one` | `--port` | Send a single test request to verify server is up |
-| `sgldev acc sgl-gsm8k` | `--num-shots` (8) | Run GSM8K via bench_sglang.py (1319 questions) |
-| `sgldev acc run-gsm8k` | `--temperature`, `--max-tokens`, `--max-samples`, `--num-shots` (5) | Run GSM8K via lm-eval |
-| `sgldev acc run-gsm8k-5-shots` | `--max-samples` (100) | GSM8K CoT 5-shot evaluation |
-| `sgldev acc run-gsm8k-100-shots` | `--max-samples` (100) | GSM8K CoT 100-shot evaluation |
-| `sgldev acc run-gpqa` | `--num-repeats` (16), `--temperature` (1.0) | GPQA evaluation via NeMo Skills |
-| `sgldev acc run-mmlu` | `--num-repeats` (16), `--max-samples` | MMLU evaluation via NeMo Skills |
-| `sgldev acc run-aime25` | `--num-repeats` (16) | AIME25 evaluation via NeMo Skills |
-| `sgldev acc run-longbench` | `--n-proc`, `--num-prompts`, `--thinking` | LongBench evaluation |
-
-### `sgldev bench` -- Benchmarking
-
-| Command | Description |
-|---|---|
-| `sgldev bench serve` | Run `sglang.bench_serving` with random data. Options: `--num-prompts`, `--input-len`, `--output-len`, `--max-concurrency` |
-
-### `sgldev profile` -- Profiling
-
-| Command | Description |
-|---|---|
-| `sgldev profile one-batch` | Single-batch latency profiling via `sglang.bench_one_batch_server`. Options: `--model`, `--batch-size`, `--input-len`, `--output-len`, `--profile-steps`, `--profiler-dir` |
-| `sgldev profile serving` | Throughput profiling via `sglang.bench_serving`. Options: `--backend`, `--num-prompts`, `--dataset-name`, `--max-concurrency` |
-
-### `sgldev ssh` -- SSH and Rsync
-
-Servers stored in `~/.config/sgldev/servers.json`.
-
-| Command | Description |
-|---|---|
-| `sgldev ssh server-set <NAME>` | Add/update a server alias. Options: `--host` (required), `--user`, `--port`, `--key` |
-| `sgldev ssh server-rm <NAME>` | Remove a named server |
-| `sgldev ssh server-ls` | List all saved servers |
-| `sgldev ssh connect <SERVER>` | SSH into a server. Options: `--cmd` (one-off command). Extra flags after `--` forwarded to ssh |
-| `sgldev ssh rsync <SRC> <DST>` | Rsync files. Options: `--server`, `--to-remote`, `--delete`, `--dry-run`, `--exclude` |
+- `/review` - Guidelines for reviewing SGLang PRs

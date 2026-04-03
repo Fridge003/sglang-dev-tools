@@ -245,7 +245,7 @@ sgl-model-gateway/tests/fixtures/golden/
 
 lmms-eval
 
-**/.claude/
+./.claude/
 **/.serena/
 
 # Server aliases (sgldev ssh alias-*)
