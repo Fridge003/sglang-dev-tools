@@ -164,7 +164,7 @@ def sync_down(
 @app.command()
 def download(
     server: Annotated[str, typer.Argument(help="Server name (defined via 'sgldev ssh server-set')")],
-    remote_path: Annotated[str, typer.Argument(help="Remote file or folder path to download")],
+    remote_path: Annotated[str, typer.Argument(help="Remote file or folder path to download, relative to DEFAULT_SGLANG_PATH")],
     local_path: Annotated[str, typer.Option(help="Local destination (default: current directory)")] = ".",
     dry_run: Annotated[bool, typer.Option(help="Show what would be transferred")] = False,
 ):
@@ -174,9 +174,7 @@ def download(
 
     Examples::
 
-        sgldev ssh download mybox /data/results.csv
-        sgldev ssh download mybox /data/logs --local-path ./logs
-        sgldev ssh download mybox ~/model/checkpoint/ --dry-run
+        sgldev ssh download mybox log.txt # It will download from DEFAULT_SGLANG_PATH/log.txt
     """
     user, host, key, port = _resolve_server(server)
 
@@ -187,7 +185,7 @@ def download(
         ssh_cmd_parts.append(f"-p {port}")
     ssh_cmd = " ".join(ssh_cmd_parts)
 
-    remote = f"{user}@{host}:{remote_path}"
+    remote = f"{user}@{host}:{f"{DEFAULT_SGLANG_PATH}/{remote_path}"}"
 
     parts = ["rsync", "-avz", "-e", f'"{ssh_cmd}"']
     if dry_run:
