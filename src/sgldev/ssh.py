@@ -161,6 +161,42 @@ def sync_down(
     run(" ".join(parts))
 
 
+@app.command()
+def download(
+    server: Annotated[str, typer.Argument(help="Server name (defined via 'sgldev ssh server-set')")],
+    remote_path: Annotated[str, typer.Argument(help="Remote file or folder path to download")],
+    local_path: Annotated[str, typer.Option(help="Local destination (default: current directory)")] = ".",
+    dry_run: Annotated[bool, typer.Option(help="Show what would be transferred")] = False,
+):
+    """Download a file or folder from a remote server.
+
+    Unlike ``sync-down``, this copies a specific path without mirroring.
+
+    Examples::
+
+        sgldev ssh download mybox /data/results.csv
+        sgldev ssh download mybox /data/logs --local-path ./logs
+        sgldev ssh download mybox ~/model/checkpoint/ --dry-run
+    """
+    user, host, key, port = _resolve_server(server)
+
+    ssh_cmd_parts = ["ssh"]
+    if key:
+        ssh_cmd_parts.append(f"-i {key}")
+    if port:
+        ssh_cmd_parts.append(f"-p {port}")
+    ssh_cmd = " ".join(ssh_cmd_parts)
+
+    remote = f"{user}@{host}:{remote_path}"
+
+    parts = ["rsync", "-avz", "-e", f'"{ssh_cmd}"']
+    if dry_run:
+        parts.append("--dry-run")
+    parts.extend([remote, local_path])
+
+    run(" ".join(parts))
+
+
 @app.command("server-set")
 def server_set_cmd(
     name: Annotated[str, typer.Argument(help="Name for the server")],
