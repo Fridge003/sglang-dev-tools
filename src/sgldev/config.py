@@ -25,7 +25,7 @@ LONGBENCH_VENV = env("LONGBENCH_VENV", "/sgl-workspace/longbench-venv")
 # ---------------------------------------------------------------------------
 # Profile (profile.py)
 # ---------------------------------------------------------------------------
-SGLANG_TORCH_PROFILER_DIR = env("SGLANG_TORCH_PROFILER_DIR", "/sgl-workspace/sglang")
+SGLANG_TORCH_PROFILER_DIR = env("SGLANG_TORCH_PROFILER_DIR", "/sgl-workspace/sglang/profile")
 
 
 # ---------------------------------------------------------------------------

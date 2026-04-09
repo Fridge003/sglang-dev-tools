@@ -20,7 +20,7 @@ def one_batch(
     batch_size: Annotated[int, typer.Option()] = 1,
     input_len: Annotated[int, typer.Option()] = 1024,
     output_len: Annotated[int, typer.Option()] = 10,
-    skip_warmup: Annotated[bool, typer.Option()] = True,
+    skip_warmup: Annotated[bool, typer.Option()] = False,
     profile: Annotated[bool, typer.Option()] = True,
     profile_steps: Annotated[int, typer.Option()] = 10,
     profiler_dir: Annotated[str, typer.Option(help="SGLANG_TORCH_PROFILER_DIR")] = SGLANG_TORCH_PROFILER_DIR,
